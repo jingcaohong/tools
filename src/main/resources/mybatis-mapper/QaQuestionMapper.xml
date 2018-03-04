@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.netlink.pangu.dao.QaQuestionMapper">
+  <resultMap id="BaseResultMap" type="com.netlink.pangu.domain.QaQuestion">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="category_id" jdbcType="BIGINT" property="categoryId" />
+    <result column="category_name" jdbcType="VARCHAR" property="categoryName" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="user_id" jdbcType="CHAR" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="views" jdbcType="BIGINT" property="views" />
+    <result column="answers" jdbcType="BIGINT" property="answers" />
+    <result column="thumb_up" jdbcType="BIGINT" property="thumbUp" />
+    <result column="thumb_down" jdbcType="BIGINT" property="thumbDown" />
+    <result column="is_delete" jdbcType="CHAR" property="isDelete" />
+    <result column="gmt_created" jdbcType="TIMESTAMP" property="gmtCreated" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.netlink.pangu.domain.QaQuestion">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="question" jdbcType="LONGVARCHAR" property="question" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    id, category_id, category_name, title, user_id, user_name, views, answers, thumb_up, 
+    thumb_down, is_delete, gmt_created, gmt_modified
+  </sql>
+  <sql id="Blob_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    question
+  </sql>
+</mapper>

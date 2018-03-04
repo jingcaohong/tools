@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.netlink.pangu.dao.QaQuestionEvaluateMapper">
+  <resultMap id="BaseResultMap" type="com.netlink.pangu.domain.QaQuestionEvaluate">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="CHAR" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="question_id" jdbcType="BIGINT" property="questionId" />
+    <result column="evaluate" jdbcType="TINYINT" property="evaluate" />
+    <result column="is_delete" jdbcType="CHAR" property="isDelete" />
+    <result column="gmt_created" jdbcType="TIMESTAMP" property="gmtCreated" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    id, user_id, user_name, question_id, evaluate, is_delete, gmt_created, gmt_modified
+  </sql>
+</mapper>
