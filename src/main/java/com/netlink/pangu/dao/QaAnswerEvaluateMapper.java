@@ -1,7 +1,7 @@
 package com.netlink.pangu.dao;
 
 import com.netlink.pangu.domain.QaAnswerEvaluate;
-import tk.mybatis.mapper.common.Mapper;
+import com.netlink.tools.mybatis.BaseMapper;
 
-public interface QaAnswerEvaluateMapper extends Mapper<QaAnswerEvaluate> {
+public interface QaAnswerEvaluateMapper extends BaseMapper<QaAnswerEvaluate> {
 }

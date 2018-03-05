@@ -3,7 +3,7 @@ package com.netlink.pangu.domain;
 import java.util.Date;
 import javax.persistence.*;
 
-@Table(name = "`qa_comment`")
+@Table(name = "qa_comment")
 public class QaComment {
     /**
      * 主键ID

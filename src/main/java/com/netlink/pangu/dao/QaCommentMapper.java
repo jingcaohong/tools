@@ -1,7 +1,7 @@
 package com.netlink.pangu.dao;
 
 import com.netlink.pangu.domain.QaComment;
-import tk.mybatis.mapper.common.Mapper;
+import com.netlink.tools.mybatis.BaseMapper;
 
-public interface QaCommentMapper extends Mapper<QaComment> {
+public interface QaCommentMapper extends BaseMapper<QaComment> {
 }

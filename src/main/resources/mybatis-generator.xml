@@ -17,7 +17,7 @@
         <property name="xmlFormatter" value="org.mybatis.generator.api.dom.DefaultXmlFormatter" />
 
         <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
-            <property name="mappers" value="tk.mybatis.mapper.common.Mapper" />
+            <property name="mappers" value="com.netlink.tools.mybatis.BaseMapper" />
             <property name="caseSensitive" value="false" />
         </plugin>
 

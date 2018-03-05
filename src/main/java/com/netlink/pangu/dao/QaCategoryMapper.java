@@ -1,7 +1,7 @@
 package com.netlink.pangu.dao;
 
 import com.netlink.pangu.domain.QaCategory;
-import tk.mybatis.mapper.common.Mapper;
+import com.netlink.tools.mybatis.BaseMapper;
 
-public interface QaCategoryMapper extends Mapper<QaCategory> {
+public interface QaCategoryMapper extends BaseMapper<QaCategory> {
 }
