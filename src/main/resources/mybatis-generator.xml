@@ -73,31 +73,7 @@
             <!-- generatedKey用于生成主键，如果设置了该元素，MBG会在生成的<insert>元素中生成一条正确的<selectKey>元素 -->
             <generatedKey column="id" sqlStatement="JDBC" />
         </table>
-        <table tableName="qa_answer_evaluate" domainObjectName="QaAnswerEvaluate"
-               enableSelectByExample="false" enableDeleteByExample="false" enableCountByExample="false"
-               enableUpdateByExample="false" selectByExampleQueryId="false">
-            <property name="useActualColumnNames" value="false" />
-            <generatedKey column="id" sqlStatement="JDBC" />
-        </table>
-        <table tableName="qa_category" domainObjectName="QaCategory"
-               enableSelectByExample="false" enableDeleteByExample="false" enableCountByExample="false"
-               enableUpdateByExample="false" selectByExampleQueryId="false">
-            <property name="useActualColumnNames" value="false" />
-            <generatedKey column="id" sqlStatement="JDBC" />
-        </table>
-        <table tableName="qa_comment" domainObjectName="QaComment"
-               enableSelectByExample="false" enableDeleteByExample="false" enableCountByExample="false"
-               enableUpdateByExample="false" selectByExampleQueryId="false">
-            <property name="useActualColumnNames" value="false" />
-            <generatedKey column="id" sqlStatement="JDBC" />
-        </table>
         <table tableName="qa_question" domainObjectName="QaQuestion"
-               enableSelectByExample="false" enableDeleteByExample="false" enableCountByExample="false"
-               enableUpdateByExample="false" selectByExampleQueryId="false">
-            <property name="useActualColumnNames" value="false" />
-            <generatedKey column="id" sqlStatement="JDBC" />
-        </table>
-        <table tableName="qa_question_evaluate" domainObjectName="QaQuestionEvaluate"
                enableSelectByExample="false" enableDeleteByExample="false" enableCountByExample="false"
                enableUpdateByExample="false" selectByExampleQueryId="false">
             <property name="useActualColumnNames" value="false" />

@@ -35,10 +35,10 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@RequestMapping("mybatis")
+@RequestMapping("/mybatis")
 public class MybatisGeneratorController {
 
-    @GetMapping("generator")
+    @GetMapping("/generator")
     public String mybatisGenerator(){
         log.info("start mybatis generate ... ");
 
@@ -55,7 +55,7 @@ public class MybatisGeneratorController {
 
             log.info("warnings : " + warnings);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("mybatis generator running failed! ", e);
             return "FAIL";
         }
 
