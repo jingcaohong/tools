@@ -3,6 +3,7 @@ package com.netlink.tools.client;
 import java.io.*;
 import java.util.Properties;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import com.jcraft.jsch.Channel;
@@ -13,26 +14,31 @@ import com.jcraft.jsch.SftpException;
 import org.springframework.util.StringUtils;
 
 /**
- * SftpClientImpl
+ * SftpClientHelper
  *
  * @author fubencheng.
  * @version 0.0.1 2018-03-24 13:01 fubencheng.
  */
 @Slf4j
-public class SftpClientImpl implements SftpClient {
+public final class SftpClientHelper {
 
 	private static final int DEFAULT_TIMEOUT = 5000;
-
 	private static final int DEFAULT_PORT = 22;
+	private static final String DEFAULT_HOST = "127.0.0.1";
 
-	private String host;
+	@Setter
+	private String host = DEFAULT_HOST;
 
+	@Setter
 	private int port = DEFAULT_PORT;
 
+	@Setter
 	private String userName;
 
+	@Setter
 	private String password;
 
+	@Setter
 	private int timeout = DEFAULT_TIMEOUT;
 
 	private Session session;
@@ -62,7 +68,14 @@ public class SftpClientImpl implements SftpClient {
 		}
 	}
 
-	@Override
+	/**
+	 * 将本地绝对全路径的文件上传到指定的目录或者指定名称的文件
+	 *
+	 * @param src 源文件全路径
+	 * @param dir 目标目录
+	 * @param fileName 目标文件名
+	 * @param mode 上传模式
+	 */
 	public void uploadFile(String src, String dir, String fileName, int mode) {
 		log.info("upload file, src[{}], dir[{}], fileName[{}], mode[{}]", src, dir, fileName, mode);
 		ChannelSftp channel = getChannel();
@@ -83,7 +96,14 @@ public class SftpClientImpl implements SftpClient {
 		}
 	}
 
-	@Override
+	/**
+	 * 将输入流写到目标文件中，目标文件不能是目录
+	 *
+	 * @param inStream inStream
+	 * @param dir dir
+	 * @param fileName fileName
+	 * @param mode mode
+	 */
 	public void uploadFile(InputStream inStream, String dir, String fileName, int mode) {
 		ChannelSftp channel = getChannel();
 		changeDir(channel, dir);
@@ -109,7 +129,14 @@ public class SftpClientImpl implements SftpClient {
 		}
 	}
 
-	@Override
+	/**
+	 * 下载文件到本地目录或者文件
+	 *
+	 * @param remotePath remotePath
+	 * @param fileName fileName
+	 * @param dest dest
+	 * @param mode mode
+	 */
 	public void downloadFile(String remotePath, String fileName, String dest, int mode) {
 		ChannelSftp channel = getChannel();
 		changeDir(channel, remotePath);
@@ -141,7 +168,13 @@ public class SftpClientImpl implements SftpClient {
 		}
 	}
 
-	@Override
+	/**
+	 * 下载文件，返回输入流
+	 *
+	 * @param remotePath remotePath
+	 * @param fileName fileName
+	 * @return InputStream
+	 */
 	public InputStream downloadFile(String remotePath, String fileName, int mode) {
 		ChannelSftp channel = getChannel();
 		changeDir(channel, remotePath);
@@ -160,7 +193,13 @@ public class SftpClientImpl implements SftpClient {
 		}
 	}
 
-	@Override
+	/**
+	 * 重命名文件
+	 *
+	 * @param remotePath remotePath
+	 * @param originalName originalName
+	 * @param newName newName
+	 */
 	public void renameFile(String remotePath, String originalName, String newName) {
 		ChannelSftp channel = getChannel();
 		changeDir(channel, remotePath);
@@ -202,26 +241,6 @@ public class SftpClientImpl implements SftpClient {
 		if (channel != null) {
 			channel.disconnect();
 		}
-	}
-
-	public void setHost(String host) {
-		this.host = host;
-	}
-
-	public void setPort(int port) {
-		this.port = port;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public void setTimeout(int timeout) {
-		this.timeout = timeout;
 	}
 
 }
