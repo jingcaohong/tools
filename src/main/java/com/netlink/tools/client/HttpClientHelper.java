@@ -35,7 +35,7 @@ public final class HttpClientHelper {
 
     private static OkHttpClient okHttpClient;
 
-    private HttpClientHelper(){
+    static {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(DEFAULT_CONNECT_TIMEOUT, TimeUnit.SECONDS);
         builder.writeTimeout(DEFAULT_WRITE_TIMEOUT, TimeUnit.SECONDS);
@@ -43,13 +43,17 @@ public final class HttpClientHelper {
         okHttpClient = builder.build();
     }
 
-    private static class OkHttpHelperHolder{
-        private static HttpClientHelper helperInstance = new HttpClientHelper();
+    private HttpClientHelper(){
+
     }
 
-    public static HttpClientHelper getHttpClientHelper(){
-        return OkHttpHelperHolder.helperInstance;
-    }
+//    private static class OkHttpHelperHolder{
+//        private static HttpClientHelper helperInstance = new HttpClientHelper();
+//    }
+//
+//    public static HttpClientHelper getHttpClientHelper(){
+//        return OkHttpHelperHolder.helperInstance;
+//    }
 
     public static String get(String url, Map<String, Object> params){
         String result = null;
@@ -128,13 +132,13 @@ public final class HttpClientHelper {
     }
 
     private static Request createPostRequest(String url, Map<String, String> params){
-            FormBody.Builder formBodyBuild = new FormBody.Builder();
-            if (Objects.nonNull(params)) {
-                for (Map.Entry<String, String> entry : params.entrySet()) {
-                    formBodyBuild.add(entry.getKey(), entry.getValue());
-                }
+        FormBody.Builder formBodyBuild = new FormBody.Builder();
+        if (Objects.nonNull(params)) {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                formBodyBuild.add(entry.getKey(), entry.getValue());
             }
-            return new Request.Builder().url(url).post(formBodyBuild.build()).build();
+        }
+        return new Request.Builder().url(url).post(formBodyBuild.build()).build();
     }
 
 }
