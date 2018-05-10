@@ -37,7 +37,7 @@ public class ToolsApplicationTests {
 	@Test
 	public void testPost() throws Exception{
 		Map<String, String> postData = createMailPostData();
-		HttpClientHelper.post("http://10.253.8.229:32363/com.netlink.pigeon.service.MessageSendService:1.0.0/sendEmail", postData);
+		HttpClientHelper.postFormData("http://10.253.8.229:32363/com.netlink.pigeon.service.MessageSendService:1.0.0/sendEmail", postData);
 	}
 
 	public Map<String, String> createMailPostData() throws Exception{

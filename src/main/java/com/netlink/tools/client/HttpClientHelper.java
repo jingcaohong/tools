@@ -33,6 +33,8 @@ public final class HttpClientHelper {
     private static final int DEFAULT_CONNECT_TIMEOUT = 10;
     private static final int DEFAULT_READ_TIMEOUT = 30;
 
+    private static MediaType mediaType = MediaType.parse("application/json");
+
     private static OkHttpClient okHttpClient;
 
     static {
@@ -88,7 +90,7 @@ public final class HttpClientHelper {
         });
     }
 
-    public static String post(String url, Map<String, String> params){
+    public static String postFormData(String url, Map<String, String> params){
         String result = null;
         try {
             Response response = okHttpClient.newCall(createPostRequest(url, params)).execute();
@@ -103,7 +105,24 @@ public final class HttpClientHelper {
         return result;
     }
 
-    public static void asyncPost(String url, Map<String, String> params, CallbackHandler handler){
+    public static String postJsonString(String url, String paramsString){
+        String result = null;
+        try {
+            RequestBody requestBody = RequestBody.create(mediaType, paramsString);
+            Request request = new Request.Builder().url(url).post(requestBody).build();
+            Response response = okHttpClient.newCall(request).execute();
+            if (!response.isSuccessful()){
+                log.error("unexpected http response code {}", response.code());
+            } else {
+                result = response.body().string();
+            }
+        } catch (IOException e) {
+            log.error("okhttp call execute failed!!!", e);
+        }
+        return result;
+    }
+
+    public static void asyncPostFormData(String url, Map<String, String> params, CallbackHandler handler){
         okHttpClient.newCall(createPostRequest(url, params)).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
