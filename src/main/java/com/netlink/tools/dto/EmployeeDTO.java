@@ -12,11 +12,9 @@
  */
 package com.netlink.tools.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -28,8 +26,10 @@ import java.util.Date;
 @Setter
 @Getter
 @ToString
+@NoArgsConstructor
 @AllArgsConstructor
-public class EmployeeDTO {
+public class EmployeeDTO implements Serializable {
+    private static final long serialVersionUID = -6772492639837779149L;
 
     private Long empId;
     private String empNo;
