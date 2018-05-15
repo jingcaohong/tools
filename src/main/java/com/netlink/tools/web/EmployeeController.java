@@ -13,9 +13,9 @@
 package com.netlink.tools.web;
 
 import com.netlink.tools.dto.EmployeeDTO;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,7 +27,7 @@ import java.util.List;
  * @author fubencheng
  * @version 0.0.1 2018-05-11 11:53 fubencheng
  */
-@Controller
+@RestController
 @RequestMapping("/employee")
 public class EmployeeController {
 
