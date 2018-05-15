@@ -18,9 +18,13 @@ import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -40,6 +44,9 @@ public class TraceLogService {
     @Autowired
     private JestClient jestClient;
 
+    @Autowired
+    private ElasticsearchTemplate elasticsearchTemplate;
+
     public List<TraceLog> searchByTraceId(List<String> indexs, String type, String traceId) throws Exception {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.matchQuery("trace", traceId));
@@ -53,8 +60,8 @@ public class TraceLogService {
     }
 
     public List<TraceLog> search(List<String> indexs, String type, Map<String, Object> params) throws Exception {
-        BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
-        for(Map.Entry<String, Object> entry : params.entrySet()) {
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
             boolQueryBuilder.must(QueryBuilders.matchQuery(entry.getKey(), entry.getValue()));
         }
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -66,6 +73,21 @@ public class TraceLogService {
             result.add(hit.source);
         }
         return result;
+    }
+
+    public List<TraceLog> queryByTraceId(String traceId, String type, String... indexs) {
+        QueryBuilder queryBuilder = QueryBuilders.matchQuery("trace", traceId);
+        SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(indexs).withTypes(type).withQuery(queryBuilder).build();
+        return elasticsearchTemplate.queryForList(searchQuery, TraceLog.class);
+    }
+
+    public List<TraceLog> query(Map<String, Object> params, String type, String... indexs) {
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        for (Map.Entry<String, Object> entry : params.entrySet()){
+            boolQueryBuilder.must(QueryBuilders.matchQuery(entry.getKey(), entry.getValue()));
+        }
+        SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(indexs).withTypes(type).withQuery(boolQueryBuilder).build();
+        return elasticsearchTemplate.queryForList(searchQuery, TraceLog.class);
     }
 
 }

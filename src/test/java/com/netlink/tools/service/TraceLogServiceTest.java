@@ -57,4 +57,19 @@ public class TraceLogServiceTest {
         System.out.println(JSONObject.toJSONString(traceLogList));
     }
 
+    @Test
+    public void testQueryByTraceId() {
+        List<TraceLog> traceLogList = traceLogService.queryByTraceId("be5163de0bcf2e3d", "microlog", "microlog-20180515");
+        System.out.println(JSONObject.toJSONString(traceLogList));
+    }
+
+    @Test
+    public void testQuery() {
+        Map<String, Object> params = new HashMap<>(4);
+        params.put("trace", "be5163de0bcf2e3d");
+        params.put("span", "46ce88bcb828c13c");
+        List<TraceLog> traceLogList = traceLogService.query(params, "microlog", "microlog-20180515");
+        System.out.println(JSONObject.toJSONString(traceLogList));
+    }
+
 }
