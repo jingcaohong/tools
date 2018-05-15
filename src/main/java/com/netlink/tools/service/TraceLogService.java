@@ -17,6 +17,7 @@ import io.searchbox.client.JestClient;
 import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * TraceLogService
@@ -41,6 +43,22 @@ public class TraceLogService {
     public List<TraceLog> searchByTraceId(List<String> indexs, String type, String traceId) throws Exception {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.matchQuery("trace", traceId));
+        Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(indexs).addType(type).build();
+        List<SearchResult.Hit<TraceLog, Void>> hits = jestClient.execute(search).getHits(TraceLog.class);
+        List<TraceLog> result = new ArrayList<>();
+        for (SearchResult.Hit<TraceLog, Void> hit : hits) {
+            result.add(hit.source);
+        }
+        return result;
+    }
+
+    public List<TraceLog> search(List<String> indexs, String type, Map<String, Object> params) throws Exception {
+        BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
+        for(Map.Entry<String, Object> entry : params.entrySet()) {
+            boolQueryBuilder.must(QueryBuilders.matchQuery(entry.getKey(), entry.getValue()));
+        }
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(boolQueryBuilder);
         Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(indexs).addType(type).build();
         List<SearchResult.Hit<TraceLog, Void>> hits = jestClient.execute(search).getHits(TraceLog.class);
         List<TraceLog> result = new ArrayList<>();

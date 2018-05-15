@@ -21,7 +21,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * TraceLogServiceTest
@@ -41,6 +43,17 @@ public class TraceLogServiceTest {
         List<String> indexs = new ArrayList<>();
         indexs.add("microlog-20180515");
         List<TraceLog> traceLogList = traceLogService.searchByTraceId(indexs, "microlog", "be5163de0bcf2e3d");
+        System.out.println(JSONObject.toJSONString(traceLogList));
+    }
+
+    @Test
+    public void testSearch() throws Exception {
+        List<String> indexs = new ArrayList<>();
+        indexs.add("microlog-20180515");
+        Map<String, Object> params = new HashMap<>(4);
+        params.put("trace", "be5163de0bcf2e3d");
+        params.put("span", "46ce88bcb828c13b");
+        List<TraceLog> traceLogList = traceLogService.search(indexs, "microlog", params);
         System.out.println(JSONObject.toJSONString(traceLogList));
     }
 
