@@ -2,6 +2,7 @@ package com.netlink.tools;
 
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.IndicesAdminClient;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
@@ -50,5 +51,10 @@ public class ToolsApplication {
 	@Bean
 	public ElasticsearchTemplate elasticsearchTemplate(){
 		return new ElasticsearchTemplate(transportClient());
+	}
+
+	@Bean
+	public IndicesAdminClient indicesAdminClient(){
+		return transportClient().admin().indices();
 	}
 }

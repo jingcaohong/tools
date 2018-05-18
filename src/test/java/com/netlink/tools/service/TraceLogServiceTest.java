@@ -18,12 +18,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * TraceLogServiceTest
@@ -70,6 +72,42 @@ public class TraceLogServiceTest {
         params.put("span", "46ce88bcb828c13c");
         List<TraceLog> traceLogList = traceLogService.query(params, "microlog", "microlog-20180515");
         System.out.println(JSONObject.toJSONString(traceLogList));
+    }
+
+    @Test
+    public void testQueryServiceName(){
+        String startTime = "2018-05-17";
+        String endTime = "2018-05-18";
+
+        LocalDate startDate = LocalDate.now();
+        LocalDate endDate = LocalDate.now();
+        if (!StringUtils.isEmpty(startTime)) {
+            // 格式 yyyy-MM-dd
+            startDate = LocalDate.parse(startTime);
+        }
+        if (!StringUtils.isEmpty(endTime)) {
+            // 格式 yyyy-MM-dd
+            endDate = LocalDate.parse(endTime);
+        }
+        List<String> dateRangeString = Stream.iterate(startDate, localDate -> localDate
+                .plusDays(1))
+                .limit(ChronoUnit.DAYS.between(startDate, endDate) + 1)
+                .map(LocalDate::toString)
+                .collect(Collectors.toList());
+        String[] indices = new String[dateRangeString.size()];
+        for(int i = 0; i < dateRangeString.size(); i++){
+            indices[i] = "zipkin-" + dateRangeString.get(i);
+        }
+
+        Set<String> serviceNames = traceLogService.queryServiceName(indices);
+        System.out.println(JSONObject.toJSONString(serviceNames));
+    }
+
+    @Test
+    public void testScanServiceName(){
+        String[] indices = new String[]{"zipkin-2018-05-17", "zipkin-2018-05-18"};
+        Set<String> serviceNames = traceLogService.scanServiceName(indices);
+        System.out.println(JSONObject.toJSONString(serviceNames));
     }
 
 }
