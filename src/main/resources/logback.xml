@@ -16,7 +16,7 @@
 			<maxHistory>30</maxHistory>
 		</rollingPolicy>
 		<encoder charset="UTF-8">
-			<pattern>%d [%thread] %-5p [%c] [%F:%L][trace=%X{X-Trace-Id:-},span=%X{X-Span-Id:-},parent=%X{X-Parent-Id:-},name=%X{X-Span-Name:-},app=%X{appname:-},begintime=%X{begintime:-},endtime=%X{fin-X1-time:-}]- %msg%n</pattern>
+			<pattern>%d [%thread] %-5p [%c] [%F:%L] - %msg%n</pattern>
 		</encoder>
 	</appender>
 
@@ -31,7 +31,7 @@
 			<maxHistory>30</maxHistory>
 		</rollingPolicy>
 		<encoder charset="UTF-8">
-			<pattern>%d [%thread] %-5p [%c] [%F:%L][trace=%X{X-Trace-Id:-},span=%X{X-Span-Id:-},parent=%X{X-Parent-Id:-},name=%X{X-Span-Name:-},app=%X{appname:-},begintime=%X{begintime:-},endtime=%X{fin-X1-time:-}]- %msg%n</pattern>
+			<pattern>%d [%thread] %-5p [%c] [%F:%L] - %msg%n</pattern>
 		</encoder>
 	</appender>
 
