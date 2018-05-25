@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 只需配置好 log.dir 和 applicationName 属性-->
+<!-- 只需配置好 log.dir 和 appName 属性-->
 <configuration debug="false">
 	<include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-	<springProperty scope="context" name="applicationName" source="spring.application.name"/>
-	<property name="log.dir" value="/alidata1/admin/"/>
+	<springProperty scope="context" name="appName" source="spring.application.name"/>
+	<property name="log.dir" value="/Users/ben/alidata1/admin/"/>
 
 	<appender name="infoAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${log.dir}/logs/${applicationName}/${HOSTNAME}_${applicationName}-ss_micro_app_${applicationName}_lt_info.log</file>
+		<file>${log.dir}/${appName}/logs/${HOSTNAME}_${appName}-ss_micro_app_${appName}_lt_info.log</file>
 		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
 			<level>INFO</level>
 		</filter>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${log.dir}/logs/${applicationName}/${HOSTNAME}_${applicationName}-ss_micro_app_${applicationName}_lt_info_%d{yyyy-MM-dd}.log
+			<fileNamePattern>${log.dir}/${appName}/logs/${HOSTNAME}_${appName}-ss_micro_app_${appName}_lt_info_%d{yyyy-MM-dd}.log
 			</fileNamePattern>
 			<maxHistory>30</maxHistory>
 		</rollingPolicy>
@@ -21,12 +21,12 @@
 	</appender>
 
 	<appender name="errorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${log.dir}/logs/${applicationName}/${HOSTNAME}_${applicationName}-ss_micro_app_${applicationName}_lt_error.log</file>
+		<file>${log.dir}/${appName}/logs/${HOSTNAME}_${appName}-ss_micro_app_${appName}_lt_error.log</file>
 		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
 			<level>WARN</level>
 		</filter>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${log.dir}/logs/${applicationName}/${HOSTNAME}_${applicationName}-ss_micro_app_${applicationName}_lt_error_%d{yyyy-MM-dd}.log
+			<fileNamePattern>${log.dir}/${appName}/logs/${HOSTNAME}_${appName}-ss_micro_app_${appName}_lt_error_%d{yyyy-MM-dd}.log
 			</fileNamePattern>
 			<maxHistory>30</maxHistory>
 		</rollingPolicy>
@@ -67,8 +67,7 @@
 		<appender-ref ref="errorAppender"/>
 	</logger>
 
-	<root>
-		<level value="INFO"/>
+	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="errorAppender"/>
 	</root>
