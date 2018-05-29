@@ -3,7 +3,7 @@
 <configuration debug="false">
 	<include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 	<springProperty scope="context" name="appName" source="spring.application.name"/>
-	<property name="log.dir" value="/alidata1/admin/"/>
+	<property name="log.dir" value="/Users/ben/alidata1/admin/"/>
 
 	<appender name="infoAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>${log.dir}/${appName}/logs/${HOSTNAME}_${appName}-ss_micro_app_${appName}_lt_info.log</file>
