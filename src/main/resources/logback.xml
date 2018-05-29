@@ -15,7 +15,7 @@
 			</fileNamePattern>
 			<maxHistory>30</maxHistory>
 		</rollingPolicy>
-		<encoder charset="UTF-8">
+		<encoder charset="UTF-8" class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<pattern>%d [%thread] %-5p [%c] [%F:%L] - %msg%n</pattern>
 		</encoder>
 	</appender>
