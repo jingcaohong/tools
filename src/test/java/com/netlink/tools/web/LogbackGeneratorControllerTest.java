@@ -34,7 +34,7 @@ public class LogbackGeneratorControllerTest {
 
     @Test
     public void testGenLogbackXmlWithoutChain(){
-        logbackGeneratorController.genLogbackXmlWithoutChain("regular", "za-test", Boolean.FALSE, null);
+        logbackGeneratorController.genLogbackXml("regular", "za-test", "INFO|ERROR", null);
     }
 
 }

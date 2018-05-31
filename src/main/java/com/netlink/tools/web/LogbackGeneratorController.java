@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 
 /**
  * LogbackGeneratorController
@@ -41,114 +40,85 @@ public class LogbackGeneratorController {
 
     private static final String MICRO_SERVICE = "micro";
 
+    private static final String FILE_NAME_PATTERN = "${log.dir}/${appName}/logs/${HOSTNAME}_${appName}-ss_%s_app_%s_lt_%s.log";
+
+    private static final String LOG_PATTERN = "%d [%thread] %-5p [%c] [%F:%L] - %msg%n";
+
+    private static final String MICRO_LOG_PATTERN = "%d [%thread] %-5p [%c] [%F:%L] [trace=%X{X-Trace-Id:-},span=%X{X-Span-Id:-},parent=%X{X-Parent-Id:-},name=%X{X-Span-Name:-},app=%X{appname:-},begintime=%X{begintime:-},endtime=%X{fin-X1-time:-}] - %msg%n";
+
     @GetMapping("/downloadXml")
-    public void genLogbackXmlWithoutChain(@NotNull @RequestParam("source") String source,
-                                          @NotNull @RequestParam("appName") String appName,
-                                          @NotNull @RequestParam("hasBizLog") Boolean hasBizLog,
-                                          HttpServletResponse response){
-        log.info("generate logback xml without chain, source={}, appName={}, logType={}", source, appName);
+    public void genLogbackXml(@RequestParam("source") String source,
+                              @RequestParam("appName") String appName,
+                              @RequestParam("logType") String logType,
+                              HttpServletResponse response){
+        log.info("generate logback xml, source={}, appName={}, logType={}", source, appName, logType);
 
         String appNameShort = appName.replaceAll("-", "").replaceAll("_", "").toLowerCase();
-        String infoFileName = "${log.dir}/${appName}/logs/${HOSTNAME}_${appName}-ss_" + source + "_app_" + appNameShort + "_lt_info.log";
-        String infoRollFileName = "${log.dir}/${appName}/logs/${HOSTNAME}_${appName}-ss_" + source + "_app_" + appNameShort + "_lt_info_%d{yyyy-MM-dd}.log";
+        String[] logTypeArray = logType.split("\\|");
 
-        String errorFileName = "${log.dir}/${appName}/logs/${HOSTNAME}_${appName}-ss_" + source + "_app_" + appNameShort + "_lt_error.log";
-        String errorRollFileName = "${log.dir}/${appName}/logs/${HOSTNAME}_${appName}-ss_" + source + "_app_" + appNameShort + "_lt_error_%d{yyyy-MM-dd}.log";
+        Document document = DocumentHelper.createDocument();
+        document.addComment("只需配置好 log.dir 和 appName 属性");
+        Element rootElement = DocumentHelper.createElement("configuration").addAttribute("debug", "false");
+        document.add(rootElement);
 
-        String bizFileName = "${log.dir}/${appName}/logs/monitor-ss_" + source + "_app_" + appNameShort + "_lt_biz.log";
-        String bizRollFileName = "${log.dir}/${appName}/logs/monitor-ss_" + source + "_app_" + appNameShort + "_lt_biz_%d{yyyy-MM-dd}.log";
+        rootElement.addElement("property").addAttribute("name", "log.dir").addAttribute("value", LOG_DIR);
+        rootElement.addElement("property").addAttribute("name", "appName").addAttribute("value", appName);
 
-        String logPattern = "%d [%thread] %-5p [%c] [%F:%L] - %msg%n";
-        if (MICRO_SERVICE.equals(source)){
-            logPattern = "%d [%thread] %-5p [%c] [%F:%L] [trace=%X{X-Trace-Id:-},span=%X{X-Span-Id:-},parent=%X{X-Parent-Id:-},name=%X{X-Span-Name:-},app=%X{appname:-},begintime=%X{begintime:-},endtime=%X{fin-X1-time:-}] - %msg%n";
-        }
-
-        try {
-            Document document = DocumentHelper.createDocument();
-            document.addComment("只需配置好 log.dir 和 appName 属性");
-            Element rootElement = DocumentHelper.createElement("configuration").addAttribute("debug", "false");
-            document.add(rootElement);
-
-            rootElement.addElement("property").addAttribute("name", "log.dir").addAttribute("value", LOG_DIR);
-            rootElement.addElement("property").addAttribute("name", "appName").addAttribute("value", appName);
-
-            // info
-            Element infoAppender = rootElement.addElement("appender").addAttribute("name", "infoAppender").addAttribute("class", "ch.qos.logback.core.rolling.RollingFileAppender");
-            infoAppender.addElement("file").addText(infoFileName);
-
-            Element infoFilter = infoAppender.addElement("filter").addAttribute("class", "ch.qos.logback.classic.filter.ThresholdFilter");
-            infoFilter.addElement("level").addText("INFO");
-
-            Element infoRollPolicy = infoAppender.addElement("rollingPolicy").addAttribute("class", "ch.qos.logback.core.rolling.TimeBasedRollingPolicy");
-            infoRollPolicy.addElement("fileNamePattern").addText(infoRollFileName);
-            infoRollPolicy.addElement("maxHistory").addText("30");
-
-            Element infoEncoder = infoAppender.addElement("encoder").addAttribute("charset", "UTF-8").addAttribute("class", "ch.qos.logback.classic.encoder.PatternLayoutEncoder");
-            infoEncoder.addElement("pattern").addText(logPattern);
-
-            // error
-            Element errorAppender = rootElement.addElement("appender").addAttribute("name", "errorAppender").addAttribute("class", "ch.qos.logback.core.rolling.RollingFileAppender");
-            errorAppender.addElement("file").addText(errorFileName);
-
-            Element errorFilter = errorAppender.addElement("filter").addAttribute("class", "ch.qos.logback.classic.filter.ThresholdFilter");
-            errorFilter.addElement("level").addText("ERROR");
-
-            Element errorRollPolicy = errorAppender.addElement("rollingPolicy").addAttribute("class", "ch.qos.logback.core.rolling.TimeBasedRollingPolicy");
-            errorRollPolicy.addElement("fileNamePattern").addText(errorRollFileName);
-            errorRollPolicy.addElement("maxHistory").addText("30");
-
-            Element errorEncoder = errorAppender.addElement("encoder").addAttribute("charset", "UTF-8").addAttribute("class", "ch.qos.logback.classic.encoder.PatternLayoutEncoder");
-            errorEncoder.addElement("pattern").addText(logPattern);
-
-            if (hasBizLog) {
-                // biz
-                Element bizAppender = rootElement.addElement("appender").addAttribute("name", "bizAppender").addAttribute("class", "ch.qos.logback.core.rolling.RollingFileAppender");
-                bizAppender.addElement("file").addText(bizFileName);
-
-                Element bizFilter = bizAppender.addElement("filter").addAttribute("class", "com.alibaba.citrus.logconfig.logback.LevelRangeFilter");
+        for (String type : logTypeArray){
+            String lowerCaseLogType = type.toLowerCase();
+            String appenderName = lowerCaseLogType + "Appender";
+            Element appender = rootElement.addElement("appender").addAttribute("name", appenderName).addAttribute("class", "ch.qos.logback.core.rolling.RollingFileAppender");
+            if (!"biz".equals(lowerCaseLogType)){
+                appender.addElement("file").addText(String.format(FILE_NAME_PATTERN, source, appNameShort, lowerCaseLogType));
+                Element filter = appender.addElement("filter").addAttribute("class", "ch.qos.logback.classic.filter.ThresholdFilter");
+                filter.addElement("level").addText(type);
+                Element rollPolicy = appender.addElement("rollingPolicy").addAttribute("class", "ch.qos.logback.core.rolling.TimeBasedRollingPolicy");
+                rollPolicy.addElement("fileNamePattern").addText(String.format(FILE_NAME_PATTERN, source, appNameShort, lowerCaseLogType).replace(".log", "_%d{yyyy-MM-dd}.log"));
+                rollPolicy.addElement("maxHistory").addText("30");
+                Element encoder = appender.addElement("encoder").addAttribute("charset", "UTF-8").addAttribute("class", "ch.qos.logback.classic.encoder.PatternLayoutEncoder");
+                if (MICRO_SERVICE.equals(source)) {
+                    encoder.addElement("pattern").addText(MICRO_LOG_PATTERN);
+                } else {
+                    encoder.addElement("pattern").addText(LOG_PATTERN);
+                }
+            } else {
+                appender.addElement("file").addText("${log.dir}/${appName}/logs/monitor-ss_" + source + "_app_" + appNameShort + "_lt_biz.log");
+                Element bizFilter = appender.addElement("filter").addAttribute("class", "com.alibaba.citrus.logconfig.logback.LevelRangeFilter");
                 bizFilter.addElement("levelMax").addText("INFO");
-
-                Element bizRollPolicy = bizAppender.addElement("rollingPolicy").addAttribute("class", "ch.qos.logback.core.rolling.TimeBasedRollingPolicy");
-                bizRollPolicy.addElement("fileNamePattern").addText(bizRollFileName);
+                Element bizRollPolicy = appender.addElement("rollingPolicy").addAttribute("class", "ch.qos.logback.core.rolling.TimeBasedRollingPolicy");
+                bizRollPolicy.addElement("fileNamePattern").addText("${log.dir}/${appName}/logs/monitor-ss_" + source + "_app_" + appNameShort + "_lt_biz_%d{yyyy-MM-dd}.log");
                 bizRollPolicy.addElement("maxHistory").addText("30");
-
-                Element bizEncoder = bizAppender.addElement("encoder").addAttribute("charset", "UTF-8").addAttribute("class", "ch.qos.logback.classic.encoder.PatternLayoutEncoder");
+                Element bizEncoder = appender.addElement("encoder").addAttribute("charset", "UTF-8").addAttribute("class", "ch.qos.logback.classic.encoder.PatternLayoutEncoder");
                 bizEncoder.addElement("pattern").addText("%msg%n");
             }
+        }
 
-            // logger
-            Element apacheLogger = rootElement.addElement("logger").addAttribute("name", "org.apache");
-            apacheLogger.addElement("level").addAttribute("value", "INFO");
-            apacheLogger.addElement("appender-ref").addAttribute("ref", "errorAppender");
-            apacheLogger.addElement("appender-ref").addAttribute("ref", "infoAppender");
+        // logger
+        String[] loggers = new String[]{"org.apache", "org.springframework", "com.netflix", "com.netlink"};
+        for (String logger : loggers){
+            Element loggerElement = rootElement.addElement("logger").addAttribute("name", logger);
+            loggerElement.addElement("level").addAttribute("value", "INFO");
+            for (String type : logTypeArray){
+                String lowerCaseLogType = type.toLowerCase();
+                if (!"biz".equals(lowerCaseLogType)) {
+                    loggerElement.addElement("appender-ref").addAttribute("ref", lowerCaseLogType + "Appender");
+                }
+            }
+        }
 
-            Element springLogger = rootElement.addElement("logger").addAttribute("name", "org.springframework");
-            springLogger.addElement("level").addAttribute("value", "INFO");
-            springLogger.addElement("appender-ref").addAttribute("ref", "errorAppender");
-            springLogger.addElement("appender-ref").addAttribute("ref", "infoAppender");
+        // root
+        Element rootLogger = rootElement.addElement("root");
+        rootLogger.addElement("level").addAttribute("value", "ERROR");
+        rootLogger.addElement("appender-ref").addAttribute("ref", "errorAppender");
 
-            Element netlinkLogger = rootElement.addElement("logger").addAttribute("name", "com.netlink");
-            netlinkLogger.addElement("level").addAttribute("value", "INFO");
-            netlinkLogger.addElement("appender-ref").addAttribute("ref", "errorAppender");
-            netlinkLogger.addElement("appender-ref").addAttribute("ref", "infoAppender");
+        // 排版缩进的格式
+        OutputFormat format = OutputFormat.createPrettyPrint();
+        // 设置编码
+        format.setEncoding("UTF-8");
+        // 设置是否缩进
+        format.setIndent(true);
 
-            Element netflixLogger = rootElement.addElement("logger").addAttribute("name", "com.netflix");
-            netflixLogger.addElement("level").addAttribute("value", "INFO");
-            netflixLogger.addElement("appender-ref").addAttribute("ref", "errorAppender");
-            netflixLogger.addElement("appender-ref").addAttribute("ref", "infoAppender");
-
-            // root
-            Element rootLogger = rootElement.addElement("root");
-            rootLogger.addElement("level").addAttribute("value", "ERROR");
-            rootLogger.addElement("appender-ref").addAttribute("ref", "errorAppender");
-
-            // 排版缩进的格式
-            OutputFormat format = OutputFormat.createPrettyPrint();
-            // 设置编码
-            format.setEncoding("UTF-8");
-            // 设置是否缩进
-            format.setIndent(true);
-
+        try {
             response.reset();
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/octet-stream");
