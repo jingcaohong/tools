@@ -20,7 +20,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
-import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -31,10 +30,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
 
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,18 +47,12 @@ import java.util.Map;
 public class HttpClientUtil {
 
     private static PoolingHttpClientConnectionManager connManager;
-    private static SocketConfig socketConfig;
 
     static {
         try{
-            SSLContextBuilder sslContextBuilder = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
-                @Override
-                public boolean isTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-                    return true;
-                }
-            });
+            SSLContextBuilder sslContextBuilder = new SSLContextBuilder().loadTrustMaterial(null, (X509Certificate[] x509Certificates, String s) -> true );
             // 构建 Socket 连接工厂
-            SSLConnectionSocketFactory sslcsf = new SSLConnectionSocketFactory(sslContextBuilder.build(), new String[]{"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.2"},
+            SSLConnectionSocketFactory sslcsf = new SSLConnectionSocketFactory(sslContextBuilder.build(), new String[]{"TLSv1.2"},
                     null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
             ConnectionSocketFactory csf = PlainConnectionSocketFactory.getSocketFactory();
             Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
@@ -74,9 +65,6 @@ public class HttpClientUtil {
             connManager.setMaxTotal(256);
             // 设置每个路由最大连接数
             connManager.setDefaultMaxPerRoute(32);
-
-            socketConfig = SocketConfig.custom().setTcpNoDelay(true).setSoKeepAlive(false)
-                    .setSoTimeout(6000).build();
         } catch (Exception e){
             log.error("initialize httpclient failed!!! ", e);
         }
@@ -84,8 +72,7 @@ public class HttpClientUtil {
     }
 
     private static CloseableHttpClient getHttpClient() {
-        return HttpClients.custom().setDefaultSocketConfig(socketConfig)
-                .setConnectionManager(connManager)
+        return HttpClients.custom().setConnectionManager(connManager)
                 .setConnectionManagerShared(true)
                 .build();
     }
