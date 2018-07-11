@@ -1,7 +1,7 @@
 package com.netlink.tools;
 
 import com.alibaba.fastjson.JSONObject;
-import com.netlink.tools.client.HttpClientHelper;
+import com.netlink.tools.client.HttpSender;
 import com.netlink.tools.model.LogFile;
 import com.netlink.tools.service.LogFileService;
 import org.junit.Test;
@@ -21,6 +21,9 @@ public class ToolsApplicationTests {
 	@Autowired
 	private LogFileService logFileService;
 
+	@Autowired
+	private HttpSender httpSender;
+
 	@Test
 	public void testSaveLogFile() {
 		LogFile logFile = new LogFile();
@@ -36,11 +39,11 @@ public class ToolsApplicationTests {
 
 	@Test
 	public void testPost() throws Exception{
-		Map<String, String> postData = createMailPostData();
-		HttpClientHelper.postFormData("http://10.253.8.229:32363/com.netlink.pigeon.service.MessageSendService:1.0.0/sendEmail", postData);
+		Map<String, Object> postData = createMailPostData();
+		httpSender.postFormData("http://10.253.8.229:32363/com.netlink.pigeon.service.MessageSendService:1.0.0/sendEmail", postData, null);
 	}
 
-	public Map<String, String> createMailPostData() throws Exception{
+	public Map<String, Object> createMailPostData() throws Exception{
 		Map<String,String> params = new HashMap<>(4);
 		params.put("content", "测试专用"); // 模板参数
 
@@ -55,7 +58,7 @@ public class ToolsApplicationTests {
 
 		Object[] obj = new Object[] { map };
 		Object[] type = new Object[] { "java.lang.String" };
-		Map<String, String> postData = new HashMap<>(4);
+		Map<String, Object> postData = new HashMap<>(4);
 		postData.put("ArgsObjects", JSONObject.toJSONString(obj));
 		postData.put("ArgsTypes", JSONObject.toJSONString(type));
 		return postData;

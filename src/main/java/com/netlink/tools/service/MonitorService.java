@@ -14,10 +14,11 @@ package com.netlink.tools.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.netlink.tools.client.HttpClientHelper;
+import com.netlink.tools.client.HttpSender;
 import com.netlink.tools.model.Metric;
 import com.netlink.tools.model.MetricHis;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -35,7 +36,10 @@ public class MonitorService {
 
     private static final String DB_URL = "http://tech-other-za-xquery-service.prd.za-tech.net/query/za-product/za-product-opentsdb";
 
-    public List<Metric> fetchMetricHis(Long startTime, Long endTime, String endpoint, String metric, String aggregator){
+    @Autowired
+    private HttpSender httpSender;
+
+    public List<Metric> fetchMetricHis(Long startTime, Long endTime, String endpoint, String metric, String aggregator) throws Exception {
         JSONObject params = new JSONObject();
         if (!Objects.isNull(startTime)){
             params.put("start", startTime);
@@ -54,7 +58,7 @@ public class MonitorService {
         JSONArray queries = new JSONArray();
         queries.add(queryObject);
         params.put("queries", queries);
-        String metricHisData = HttpClientHelper.postJsonString(DB_URL, params.toJSONString());
+        String metricHisData = httpSender.postJsonData(DB_URL, params.toJSONString(), null);
 
         List<Metric> result = new ArrayList<>();
         if (!StringUtils.isEmpty(metric)) {

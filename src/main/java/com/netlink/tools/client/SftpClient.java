@@ -14,13 +14,13 @@ import com.jcraft.jsch.SftpException;
 import org.springframework.util.StringUtils;
 
 /**
- * SftpClientHelper
+ * SftpClient
  *
  * @author fubencheng.
  * @version 0.0.1 2018-03-24 13:01 fubencheng.
  */
 @Slf4j
-public final class SftpClientHelper {
+public final class SftpClient {
 
 	private static final int DEFAULT_TIMEOUT = 5000;
 	private static final int DEFAULT_PORT = 22;

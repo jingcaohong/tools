@@ -105,7 +105,7 @@
 //            mimeMessageHelper.setSubject(emailDTO.getSubject());
 //
 //            freeMarkerConfigurer.setTemplateLoaderPath("classpath:templates");
-//            Template template = freeMarkerConfigurer.getConfiguration().getTemplate("mail.html");
+//            Template template = freeMarkerConfigurer.getConfiguration().getTemplate("metric_alarm_email_template.ftl");
 //            String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, templateParams);
 //            mimeMessageHelper.setText(html, true);
 //            mailSender.send(message);

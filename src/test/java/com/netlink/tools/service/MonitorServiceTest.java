@@ -41,16 +41,20 @@ public class MonitorServiceTest {
 
     @Test
     public void testFetchMetricHis(){
-        List<Metric> result = monitorService.fetchMetricHis(1525226400L, null,
-                "10.253.115.162","cpu.busy", "max");
-        for (Metric metric : result) {
-            System.out.println(metric.getMetric());
-            Map<String, BigDecimal> map = JSONObject.parseObject(metric.getDps(), HashMap.class);
-            Map<String, BigDecimal> finalMap = new LinkedHashMap<>();
-            map.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEachOrdered(e -> finalMap.put(e.getKey(), e.getValue()));
-            for (Map.Entry<String, BigDecimal> entry : finalMap.entrySet()){
-                System.out.println(entry.getKey() + "--->" + entry.getValue());
+        try {
+            List<Metric> result = monitorService.fetchMetricHis(1525226400L, null,
+                    "10.253.115.162", "cpu.busy", "max");
+            for (Metric metric : result) {
+                System.out.println(metric.getMetric());
+                Map<String, BigDecimal> map = JSONObject.parseObject(metric.getDps(), HashMap.class);
+                Map<String, BigDecimal> finalMap = new LinkedHashMap<>();
+                map.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEachOrdered(e -> finalMap.put(e.getKey(), e.getValue()));
+                for (Map.Entry<String, BigDecimal> entry : finalMap.entrySet()) {
+                    System.out.println(entry.getKey() + "--->" + entry.getValue());
+                }
             }
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 
